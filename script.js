@@ -8,7 +8,7 @@
     //game states
     var game = {
         status: '',
-        deckId: '',
+        deck_id: '',
         remaining: '',
         result: '',
         player: '',
@@ -42,15 +42,15 @@
 
     //urls
     var deck = "http://deckofcardsapi.com/api/deck/new/shuffle/",
-        card = "http://deckofcardsapi.com/api/deck/" + game.deckId + "/draw/?count=1",
-        shuffle = "http://deckofcardsapi.com/api/deck/" + game.deckId + "/shuffle/";
+        card = "http://deckofcardsapi.com/api/deck/" + game.deck_id + "/draw/?count=1",
+        shuffle = "http://deckofcardsapi.com/api/deck/" + game.deck_id + "/shuffle/";
 
     function init() {
         start.show();
         game.status = 'NEW';
 
         start.on('click', function(){
-            var dealer = {} ? handleData(deck) : handleData(shuffle); 
+            game.status === 'NEW' ? handleData(deck) : handleData(shuffle);
             
             start.hide();
 
@@ -64,9 +64,12 @@
             url: stateUrl,
             type: 'GET'
         }).then(function(data) {
+
+            console.log(data);
+
             if (dealer.deck === '') {
                 dealer.deck = data;
-                game.deckId = data.deckId;
+                game.deck_id = data.deck_id;
             } else {
                 dealer.draw = data;
             }
@@ -80,7 +83,7 @@
         switch (game.status) {
             case "NEW":
                 game.status = 'STARTED';
-                handleData(card);
+                handleData("http://deckofcardsapi.com/api/deck/" + game.deck_id + "/draw/?count=1");
                 break;
             case "STARTED":
                 player.attr('src', dealer.draw.cards[0].image);
@@ -129,7 +132,7 @@
             choice.text(messages[guess]);
             game.drawn = dealer.draw.cards[0].value;
             game.player = guess;
-            handleData(card);
+            handleData("http://deckofcardsapi.com/api/deck/" + game.deck_id + "/draw/?count=1");
         });
     }
 
